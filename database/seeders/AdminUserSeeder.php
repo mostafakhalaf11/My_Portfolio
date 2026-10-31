@@ -21,13 +21,13 @@ class AdminUserSeeder extends Seeder
         $password = config('portfolio.admin_password');
 
         if (blank($email)) {
-            $this->command?->warn('No admin email configured — skipping AdminUserSeeder.');
+            $this->command->warn('No admin email configured — skipping AdminUserSeeder.');
 
             return;
         }
 
         if (blank($password)) {
-            $this->command?->warn('PORTFOLIO_ADMIN_PASSWORD is not set — skipping AdminUserSeeder.');
+            $this->command->warn('PORTFOLIO_ADMIN_PASSWORD is not set — skipping AdminUserSeeder.');
 
             return;
         }
@@ -41,6 +41,6 @@ class AdminUserSeeder extends Seeder
             ],
         );
 
-        $this->command?->info("Admin ready: {$user->email}");
+        $this->command->info("Admin ready: {$user->email}");
     }
 }

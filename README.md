@@ -3,7 +3,7 @@
 Backend engineer's portfolio, built as a working system rather than a static page:
 a Laravel 13 + Inertia + Vue 3 site whose content is administered through Filament 5.
 
-**Stack:** Laravel 13 · PHP 8.4 · Inertia 2 · Vue 3.5 · Tailwind 4 · Vite 8 · Filament 5 · MySQL 8
+**Stack:** Laravel 13 · PHP 8.4 · Inertia 2 · Vue 3.5 · Tailwind 4 · Vite 8 · Filament 5 · SQLite (production, tests) · MySQL 8 (optional locally)
 **Quality gates:** Pest 4 · Larastan (level 6) · Laravel Pint
 
 ## Why it is built this way
@@ -89,14 +89,55 @@ vendor/bin/phpstan analyse   # Larastan, level 6
 vendor/bin/pint --test       # formatting
 ```
 
-Tests run against MySQL (`portfolio_testing`), not SQLite — testing on a different engine than
-production hides differences that matter.
+Tests run against in-memory SQLite, the engine production runs on — testing on a different
+engine than production hides differences that matter. PHP needs the `pdo_sqlite` extension.
 
 Page tests assert **Inertia props**, not rendered HTML. Without SSR the markup lives in the Vue
 bundle, so asserting on server HTML tests nothing.
 
 One test exists purely as a guard: `it('keeps credentials out of version-controlled source')`
 scans the tracked tree for the admin password on every run.
+
+## Deployment — Azure App Service, $0/month
+
+Production is an App Service **Free (F1)** Linux plan on PHP 8.4, defined in `infra/` (Bicep)
+and deployed by `.github/workflows/deploy.yml` on every push to `main` once the gates pass.
+
+Why it is shaped this way:
+
+- **F1 is the only App Service tier that is free for the life of the subscription.** It costs a
+  `*.azurewebsites.net` address, cold starts after ~20 idle minutes, 60 CPU-minutes a day and
+  1 GB of disk — all acceptable for a portfolio.
+- **SQLite instead of a managed database.** Every managed database on Azure is billed after its
+  free year; this site is single-author and read-mostly. The file lives at
+  `/home/data/portfolio.sqlite`, outside `wwwroot`, so deployments never touch it. Sessions use
+  cookies so page views never write to it.
+- **A $1 subscription budget is the tripwire.** The expected bill is $0.00, so any alert means
+  something billable exists.
+- `deploy/azure/startup.sh` runs on every container start: it points nginx at `public/`,
+  migrates, seeds **only a brand-new database** (afterwards the admin panel owns the content),
+  and rebuilds caches from the App Service settings.
+
+First-time setup (PowerShell, after `az login`):
+
+```powershell
+$env:PORTFOLIO_APP_KEY = (php artisan key:generate --show)
+$env:PORTFOLIO_ADMIN_PASSWORD = '<a strong password>'
+
+# Preview, then create. Nothing is created by what-if.
+az deployment sub what-if --location francecentral --template-file infra/main.bicep --parameters infra/main.bicepparam
+az deployment sub create  --location francecentral --template-file infra/main.bicep --parameters infra/main.bicepparam
+
+# Publish profile for GitHub Actions (store as the AZURE_WEBAPP_PUBLISH_PROFILE secret)
+az webapp deployment list-publishing-profiles -g rg-portfolio -n mostafa-khalaf --xml
+```
+
+Then in GitHub → Settings → Secrets and variables → Actions, add the variable
+`AZURE_WEBAPP_NAME` and the secret `AZURE_WEBAPP_PUBLISH_PROFILE`, and push to `main`.
+
+**Moving to a custom domain later** needs no code change: the host only exists in the `APP_URL`
+app setting. Either move the plan to B1 (about $13/month) and bind the domain with a free App
+Service managed certificate, or keep F1 behind a Cloudflare Worker proxy.
 
 ## Roadmap
 
@@ -107,4 +148,5 @@ scans the tracked tree for the admin password on every run.
 - [ ] OpenAPI docs + live API playground
 - [ ] ABAC policy simulator
 - [ ] Contact form with honeypot + Turnstile
-- [ ] SSR, dynamic OG images, sitemap, deployment pipeline
+- [x] Deployment pipeline: GitHub Actions → Azure App Service (F1, $0/month)
+- [ ] SSR, dynamic OG images, sitemap

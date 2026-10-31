@@ -38,7 +38,9 @@ return [
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
+            // Production sets 5000 (ms) so a write waits for the lock instead of failing at once.
+            // journal_mode stays default: WAL is unsafe on Azure's network-mounted /home share.
+            'busy_timeout' => env('DB_BUSY_TIMEOUT'),
             'journal_mode' => null,
             'synchronous' => null,
             'transaction_mode' => 'DEFERRED',

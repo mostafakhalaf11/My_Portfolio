@@ -1,0 +1,31 @@
+name: Keep warm
+
+# F1 has no Always On: after ~20 idle minutes Azure unloads the app and the next visitor waits
+# through a cold start. One request every 10 minutes keeps it loaded. Free: Actions minutes cost
+# nothing on a public repository, and each ping uses well under a second of F1's daily CPU quota.
+#
+# --fail makes a broken site a failed run, and GitHub emails failed scheduled runs to whoever last
+# edited this file, so it doubles as a basic uptime monitor.
+#
+# GitHub pauses scheduled workflows after 60 days without repository activity and emails a
+# warning first; one click under Actions → Keep warm re-enables it.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    name: Ping the home page
+    runs-on: ubuntu-latest
+    if: vars.AZURE_WEBAPP_NAME != ''
+    timeout-minutes: 5
+    steps:
+      # The home page, not /up: it loads the database and page code, so those stay warm too.
+      - run: >
+          curl --fail --silent --show-error --max-time 180 --retry 2 --retry-delay 20
+          -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n"
+          "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net/"

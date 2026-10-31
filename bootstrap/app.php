@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Azure App Service terminates TLS at its front end and forwards plain HTTP; trusting
+        // X-Forwarded-* keeps generated URLs on https (otherwise assets load as mixed content).
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
