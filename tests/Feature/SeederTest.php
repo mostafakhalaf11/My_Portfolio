@@ -19,7 +19,8 @@ it('seeds the profile from the resume', function () {
 
     expect($profile->name)->toBe('Mostafa Khalaf Mohamed')
         ->and($profile->email)->toBe('mostafkhalaf11@gmail.com')
-        ->and($profile->summary)->toContain('2 years of experience')
+        ->and($profile->headline)->toBe('Full-Stack Software Engineer')
+        ->and($profile->summary)->toContain('2+ years of experience')
         ->and($profile->languages)->toHaveCount(3)
         ->and($profile->languages[0])->toMatchArray(['name' => 'Arabic', 'level' => 'Native'])
         ->and($profile->strengths)->not->toBeEmpty()
@@ -46,7 +47,7 @@ it('seeds experience in reverse chronological order with the current role open-e
         ->and($roles->first()->company)->toBe('78sWorks')
         ->and($roles->first()->isCurrent())->toBeTrue()
         ->and($roles->first()->period())->toBe('Jul 2025 - Present')
-        ->and($roles->first()->highlights)->toHaveCount(7)
+        ->and($roles->first()->highlights)->toHaveCount(8)
         ->and($roles->last()->company)->toBe('KB-Denim');
 });
 

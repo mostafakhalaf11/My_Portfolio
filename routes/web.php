@@ -5,4 +5,7 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
-Route::get('/case-studies/{caseStudy}', [CaseStudyController::class, 'show'])->name('case-studies.show');
+Route::get('/projects/{caseStudy}', [CaseStudyController::class, 'show'])->name('projects.show');
+
+// The section was renamed from "Case studies"; links already shared keep working.
+Route::permanentRedirect('/case-studies/{slug}', '/projects/{slug}');

@@ -2,6 +2,8 @@
 import { Head, Link } from '@inertiajs/vue3';
 import SiteShell from '../../components/SiteShell.vue';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.vue';
+import ProjectLinks from '../../components/ProjectLinks.vue';
+import StageBadge from '../../components/StageBadge.vue';
 
 defineProps({
     profile: { type: Object, required: true },
@@ -17,16 +19,23 @@ defineProps({
 
     <SiteShell :name="profile.name">
         <article class="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
-            <Link href="/#case-studies" class="font-mono text-xs text-[color:var(--color-ink-muted)] hover:text-[color:var(--color-signal)]">
-                ← back
+            <Link href="/#projects" class="font-mono text-xs text-[color:var(--color-ink-muted)] hover:text-[color:var(--color-signal)]">
+                ← all projects
             </Link>
 
-            <p class="mt-6 font-mono text-xs text-[color:var(--color-ink-muted)]">
+            <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <StageBadge :stage="study.stage" />
+                <span v-if="study.years" class="font-mono text-xs text-[color:var(--color-ink-muted)]">{{ study.years }}</span>
+            </div>
+
+            <p class="mt-3 font-mono text-xs text-[color:var(--color-ink-muted)]">
                 {{ study.clientLabel }}<span v-if="study.role"> · {{ study.role }}</span>
             </p>
 
             <h1 class="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">{{ study.title }}</h1>
             <p v-if="study.subtitle" class="mt-3 text-lg text-[color:var(--color-ink-muted)]">{{ study.subtitle }}</p>
+
+            <ProjectLinks :live-url="study.liveUrl" :repo-url="study.repoUrl" class="mt-6" />
 
             <ul class="mt-5 flex flex-wrap gap-1.5" role="list">
                 <li
@@ -94,26 +103,21 @@ defineProps({
                 </dl>
             </section>
 
-            <div v-if="study.repoUrl || study.liveUrl" class="mt-10 flex flex-wrap gap-3">
-                <a
-                    v-if="study.liveUrl"
-                    :href="study.liveUrl"
-                    target="_blank"
-                    rel="noopener"
-                    class="rounded-md border border-[color:var(--color-wire)] px-4 py-2 text-sm transition hover:border-[color:var(--color-signal)]"
-                >
-                    Live site
-                </a>
-                <a
-                    v-if="study.repoUrl"
-                    :href="study.repoUrl"
-                    target="_blank"
-                    rel="noopener"
-                    class="rounded-md border border-[color:var(--color-wire)] px-4 py-2 text-sm transition hover:border-[color:var(--color-signal)]"
-                >
-                    Repository
-                </a>
-            </div>
+            <section v-if="study.roadmap.length" class="mt-10">
+                <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">What's next</h2>
+                <ul class="mt-4 space-y-2.5" role="list">
+                    <li
+                        v-for="item in study.roadmap"
+                        :key="item"
+                        class="flex gap-3 leading-relaxed text-[color:var(--color-ink-muted)]"
+                    >
+                        <span class="font-mono text-[color:var(--color-signal)]" aria-hidden="true">›</span>
+                        <span>{{ item }}</span>
+                    </li>
+                </ul>
+            </section>
+
+            <ProjectLinks :live-url="study.liveUrl" :repo-url="study.repoUrl" class="mt-10" />
         </article>
     </SiteShell>
 </template>

@@ -20,4 +20,17 @@ class Profile extends Model
     {
         return static::query()->firstOrFail();
     }
+
+    /**
+     * `resume_path` is relative to public/. The download button only appears once the
+     * PDF is actually there, so a configured path can never render a dead link.
+     */
+    public function resumeUrl(): ?string
+    {
+        if (blank($this->resume_path) || ! is_file(public_path($this->resume_path))) {
+            return null;
+        }
+
+        return asset($this->resume_path);
+    }
 }

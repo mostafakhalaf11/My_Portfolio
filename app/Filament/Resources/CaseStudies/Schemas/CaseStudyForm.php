@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CaseStudies\Schemas;
 
 use App\Enums\ContentStatus;
+use App\Enums\ProjectStage;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -139,10 +140,27 @@ class CaseStudyForm
                                     ->defaultItems(0)
                                     ->columnSpanFull(),
 
-                                TextInput::make('repo_url')->url()->prefixIcon('heroicon-m-code-bracket'),
+                                TextInput::make('repo_url')
+                                    ->url()
+                                    ->prefixIcon('heroicon-m-code-bracket')
+                                    ->helperText('Public repositories only — a private repo is a 404 for visitors.'),
                                 TextInput::make('live_url')->url()->prefixIcon('heroicon-m-globe-alt'),
                             ])
                             ->columns(2),
+
+                        Tabs\Tab::make('Status & roadmap')
+                            ->schema([
+                                Select::make('stage')
+                                    ->options(ProjectStage::class)
+                                    ->helperText('Badge on the card and page. Leave empty to hide it.'),
+
+                                Repeater::make('roadmap')
+                                    ->label("What's next")
+                                    ->helperText('Upcoming work, one line each. Shown on the project page.')
+                                    ->simple(TextInput::make('item')->required()->maxLength(200))
+                                    ->defaultItems(0)
+                                    ->columnSpanFull(),
+                            ]),
                     ]),
 
                 Section::make('Publishing')

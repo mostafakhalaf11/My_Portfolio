@@ -31,6 +31,7 @@ class HomeController extends Controller
                 'location' => $profile->location,
                 'githubUrl' => $profile->github_url,
                 'linkedinUrl' => $profile->linkedin_url,
+                'resumeUrl' => $profile->resumeUrl(),
                 'languages' => $profile->languages,
                 'strengths' => $profile->strengths,
                 'isAvailable' => $profile->is_available,
@@ -52,13 +53,14 @@ class HomeController extends Controller
                     'subtitle' => $s->subtitle,
                     'clientLabel' => $s->client_label,
                     'role' => $s->role,
-                    'years' => trim(($s->year_from ?? '').($s->year_to ? '–'.$s->year_to : ($s->year_from ? '–present' : ''))),
+                    'years' => $s->yearsLabel(),
                     'summary' => $s->summary,
                     'tech' => $s->tech ?? [],
                     'outcomes' => array_slice($s->outcomes ?? [], 0, 3),
                     'diagram' => $s->architecture_diagram,
                     'repoUrl' => $s->repo_url,
                     'liveUrl' => $s->live_url,
+                    'stage' => $s->stage ? ['value' => $s->stage->value, 'label' => $s->stage->getLabel()] : null,
                 ]),
 
             'skillGroups' => SkillGroup::with('skills')->orderBy('sort_order')->get()

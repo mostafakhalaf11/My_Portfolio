@@ -28,7 +28,7 @@ const toggleTheme = () => {
 };
 
 const links = [
-    { href: '/#case-studies', label: 'Case studies' },
+    { href: '/#projects', label: 'Projects' },
     { href: '/#stack', label: 'Stack' },
     { href: '/#experience', label: 'Experience' },
     { href: '/#contact', label: 'Contact' },

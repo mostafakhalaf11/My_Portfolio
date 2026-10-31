@@ -21,6 +21,7 @@ class CaseStudyController extends Controller
                 'subtitle' => $caseStudy->subtitle,
                 'clientLabel' => $caseStudy->client_label,
                 'role' => $caseStudy->role,
+                'years' => $caseStudy->yearsLabel(),
                 'summary' => $caseStudy->summary,
                 'context' => $caseStudy->context,
                 'constraints' => $caseStudy->constraints,
@@ -32,6 +33,8 @@ class CaseStudyController extends Controller
                 'tech' => $caseStudy->tech ?? [],
                 'repoUrl' => $caseStudy->repo_url,
                 'liveUrl' => $caseStudy->live_url,
+                'stage' => $caseStudy->stage ? ['value' => $caseStudy->stage->value, 'label' => $caseStudy->stage->getLabel()] : null,
+                'roadmap' => $caseStudy->roadmap ?? [],
             ],
         ]);
     }

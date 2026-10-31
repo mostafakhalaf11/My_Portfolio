@@ -18,6 +18,10 @@
     --color-wire: #d8dee9;
     --color-signal: #0e7490;
     --color-signal-soft: #cffafe;
+
+    /* Not-yet-public states (private staging): amber, never the live signal colour. */
+    --color-caution: #b45309;
+    --color-caution-soft: #fef3c7;
 }
 
 .dark {
@@ -28,6 +32,8 @@
     --color-wire: #1e293b;
     --color-signal: #38bdf8;
     --color-signal-soft: #0c4a6e;
+    --color-caution: #fbbf24;
+    --color-caution-soft: #451a03;
 }
 
 @layer base {

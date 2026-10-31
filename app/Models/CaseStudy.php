@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContentStatus;
+use App\Enums\ProjectStage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,8 @@ class CaseStudy extends Model
         'outcomes' => 'array',
         'architecture_diagram' => 'array',
         'tech' => 'array',
+        'stage' => ProjectStage::class,
+        'roadmap' => 'array',
         'is_featured' => 'boolean',
         'status' => ContentStatus::class,
         'published_at' => 'datetime',
@@ -44,6 +47,12 @@ class CaseStudy extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderByDesc('is_featured')->orderBy('sort_order')->orderByDesc('published_at');
+    }
+
+    /** "2025–present", "2024–2025" or "2026": the span shown beside the stage badge. */
+    public function yearsLabel(): string
+    {
+        return trim(($this->year_from ?? '').($this->year_to ? '–'.$this->year_to : ($this->year_from ? '–present' : '')));
     }
 
     public function isPublished(): bool

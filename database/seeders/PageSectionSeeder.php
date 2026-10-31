@@ -12,12 +12,17 @@ class PageSectionSeeder extends Seeder
             'key' => 'hero',
             'heading' => 'I build the parts of the system nobody sees.',
             'subheading' => 'Multi-tenant architecture, policy-driven business engines, and APIs that survive their second year.',
-            'settings' => ['show_diagram' => true, 'show_availability' => true],
+            'settings' => [
+                'show_diagram' => true,
+                'show_availability' => true,
+                'now' => 'Shipping the API behind the AMG ERP mobile and desktop apps · Stock Yard in private staging ahead of launch',
+            ],
         ],
         [
+            // Key stays `case_studies` (it is internal); the public name is "Featured projects".
             'key' => 'case_studies',
-            'heading' => 'Case studies',
-            'subheading' => 'Context, constraints, the options rejected, and what the decision measured out to.',
+            'heading' => 'Featured projects',
+            'subheading' => 'Production systems I designed and shipped — the context, the options rejected, and what each decision measured out to.',
             'settings' => ['limit' => 4],
         ],
         [
@@ -35,7 +40,7 @@ class PageSectionSeeder extends Seeder
         [
             'key' => 'contact',
             'heading' => 'Get in touch',
-            'subheading' => 'Open to backend and full-stack roles, remote or Cairo-based.',
+            'subheading' => 'Open to full-stack and backend roles, remote or Cairo-based.',
             'settings' => ['show_form' => true],
         ],
     ];

@@ -2,6 +2,8 @@
 import { Head, Link } from '@inertiajs/vue3';
 import SiteShell from '../components/SiteShell.vue';
 import ArchitectureDiagram from '../components/ArchitectureDiagram.vue';
+import ProjectLinks from '../components/ProjectLinks.vue';
+import StageBadge from '../components/StageBadge.vue';
 
 const props = defineProps({
     profile: { type: Object, required: true },
@@ -37,7 +39,7 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
                         <span class="absolute inline-flex size-full animate-ping rounded-full bg-[color:var(--color-signal)] opacity-60"></span>
                         <span class="relative inline-flex size-2 rounded-full bg-[color:var(--color-signal)]"></span>
                     </span>
-                    Open to backend and full-stack roles
+                    Open to full-stack and backend roles
                 </p>
 
                 <h1 class="max-w-3xl text-3xl font-bold tracking-tight text-balance sm:text-5xl">
@@ -52,20 +54,61 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
                     {{ profile.summary }}
                 </p>
 
+                <p
+                    v-if="section('hero').settings?.now"
+                    class="mt-5 flex max-w-2xl gap-3 font-mono text-xs leading-relaxed text-[color:var(--color-ink-muted)]"
+                >
+                    <span class="shrink-0 font-semibold text-[color:var(--color-signal)]">now →</span>
+                    <span>{{ section('hero').settings.now }}</span>
+                </p>
+
                 <div class="mt-8 flex flex-wrap gap-3">
                     <a
-                        href="#case-studies"
+                        href="#projects"
                         class="rounded-md bg-[color:var(--color-signal)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-surface)] transition hover:opacity-90"
                     >
-                        Read the case studies
+                        See my projects
                     </a>
                     <a
+                        v-if="profile.githubUrl"
                         :href="profile.githubUrl"
                         target="_blank"
                         rel="noopener"
-                        class="rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
+                        class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
                     >
+                        <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
+                        </svg>
                         GitHub
+                    </a>
+                    <a
+                        v-if="profile.linkedinUrl"
+                        :href="profile.linkedinUrl"
+                        target="_blank"
+                        rel="noopener"
+                        class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
+                    >
+                        <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+                            <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
+                        </svg>
+                        LinkedIn
+                    </a>
+                    <a
+                        href="#contact"
+                        class="rounded-md border border-[color:var(--color-signal)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-signal)] transition hover:bg-[color:var(--color-signal-soft)]"
+                    >
+                        Get in touch
+                    </a>
+                    <a
+                        v-if="profile.resumeUrl"
+                        :href="profile.resumeUrl"
+                        download
+                        class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
+                    >
+                        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Download CV
                     </a>
                 </div>
 
@@ -81,8 +124,8 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
             </div>
         </section>
 
-        <!-- Case studies -->
-        <section id="case-studies" class="border-b border-[color:var(--color-wire)] py-16 sm:py-20">
+        <!-- Featured projects (CMS section key: case_studies) -->
+        <section id="projects" class="border-b border-[color:var(--color-wire)] py-16 sm:py-20">
             <div class="mx-auto max-w-5xl px-5 sm:px-8">
                 <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">{{ section('case_studies').heading }}</h2>
                 <p class="mt-2 max-w-2xl text-sm text-[color:var(--color-ink-muted)]">
@@ -95,12 +138,17 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
                         :key="study.slug"
                         class="flex flex-col rounded-xl border border-[color:var(--color-wire)] bg-[color:var(--color-surface-raised)] p-5 transition hover:border-[color:var(--color-signal)]"
                     >
-                        <p class="font-mono text-xs text-[color:var(--color-ink-muted)]">
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <StageBadge :stage="study.stage" />
+                            <span v-if="study.years" class="font-mono text-xs text-[color:var(--color-ink-muted)]">{{ study.years }}</span>
+                        </div>
+
+                        <p class="mt-3 font-mono text-xs text-[color:var(--color-ink-muted)]">
                             {{ study.clientLabel }}<span v-if="study.role"> · {{ study.role }}</span>
                         </p>
 
                         <h3 class="mt-2 text-lg font-semibold">
-                            <Link :href="`/case-studies/${study.slug}`" class="hover:text-[color:var(--color-signal)]">
+                            <Link :href="`/projects/${study.slug}`" class="hover:text-[color:var(--color-signal)]">
                                 {{ study.title }}
                             </Link>
                         </h3>
@@ -124,12 +172,16 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
                             </li>
                         </ul>
 
-                        <Link
-                            :href="`/case-studies/${study.slug}`"
-                            class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-signal)]"
-                        >
-                            Read the decisions →
-                        </Link>
+                        <!-- mt-auto pins the action row to the bottom so side-by-side cards line up. -->
+                        <div class="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
+                            <ProjectLinks :live-url="study.liveUrl" :repo-url="study.repoUrl" />
+                            <Link
+                                :href="`/projects/${study.slug}`"
+                                class="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-signal)]"
+                            >
+                                Read the decisions →
+                            </Link>
+                        </div>
                     </article>
                 </div>
             </div>

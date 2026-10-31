@@ -52,7 +52,7 @@ class SkillSeeder extends Seeder
         [
             'name' => 'Frontend',
             'icon' => 'heroicon-o-window',
-            'description' => 'Enough front-end depth to ship the whole feature, including RTL.',
+            'description' => 'Server-rendered storefronts and admin interfaces, shipped end to end — including Arabic RTL.',
             'primary' => ['Nuxt 4', 'Vue 3', 'TypeScript', 'TailwindCSS'],
             'skills' => [
                 'Nuxt 4', 'Vue 3', 'TypeScript', 'Blade', 'Alpine.js', 'TailwindCSS',

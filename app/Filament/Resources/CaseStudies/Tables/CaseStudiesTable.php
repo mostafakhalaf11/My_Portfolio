@@ -36,6 +36,8 @@ class CaseStudiesTable
                 TextColumn::make('sort_order')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('stage')
+                    ->badge(),
                 TextColumn::make('status')
                     ->badge()
                     ->searchable(),
