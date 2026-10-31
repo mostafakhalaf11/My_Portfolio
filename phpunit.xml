@@ -26,6 +26,8 @@
         <!-- Production runs SQLite (Azure App Service F1), so the suite runs on the same engine. -->
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
+        <!-- Pinned so tests never depend on a developer's .env (CI copies .env.example). -->
+        <env name="PORTFOLIO_ADMIN_EMAILS" value="mostafkhalaf11@gmail.com"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
