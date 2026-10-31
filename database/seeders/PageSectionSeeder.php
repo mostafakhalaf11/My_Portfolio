@@ -10,8 +10,8 @@ class PageSectionSeeder extends Seeder
     private const SECTIONS = [
         [
             'key' => 'hero',
-            'heading' => 'I build the parts of the system nobody sees.',
-            'subheading' => 'Multi-tenant architecture, policy-driven business engines, and APIs that survive their second year.',
+            'heading' => 'I build multi-tenant systems end to end — from the payroll engine to the app on your phone.',
+            'subheading' => 'Policy-driven business engines, APIs that survive their second year, and the apps built on top of them.',
             'settings' => [
                 'show_diagram' => true,
                 'show_availability' => true,
