@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Admin mark: "#", the root shell prompt, in the amber caution colour — distinct from the public "~/" tab. -->
+  <rect width="32" height="32" rx="7" fill="#0a0f1a"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#1e293b"/>
+  <g fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round">
+    <path d="M13 7 11 25"/>
+    <path d="M21 7 19 25"/>
+    <path d="M7.5 12.5h18"/>
+    <path d="M6.5 19.5h18"/>
+  </g>
+</svg>

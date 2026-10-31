@@ -90,6 +90,9 @@ it('links Stock Yard only to pages a visitor can actually open', function () {
 });
 
 it('hides the CV button until the PDF exists', function () {
+    // Point at a file that never exists, so the test holds whether or not the real CV is in public/cv.
+    Profile::current()->update(['resume_path' => 'cv/not-uploaded-yet.pdf']);
+
     $this->get('/')->assertInertia(fn (Assert $page) => $page->where('profile.resumeUrl', null));
 
     Profile::current()->update(['resume_path' => 'favicon.ico']);

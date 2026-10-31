@@ -119,7 +119,6 @@ const links = [
                 class="mx-auto flex max-w-5xl flex-col gap-2 px-5 font-mono text-xs text-[color:var(--color-ink-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-8"
             >
                 <span>© {{ new Date().getFullYear() }} {{ name }}</span>
-                <span>Laravel 13 · Inertia · Vue 3 · Filament 5</span>
             </div>
         </footer>
     </div>

@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="dark light">
 
+    {{-- SVG for every current browser; the .ico (sizes hint keeps Chrome on the SVG) and PNG are fallbacks. --}}
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="48x48">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
     {{-- Theme is resolved before paint so a dark visitor never sees a light flash. --}}
     <script>
         (function () {

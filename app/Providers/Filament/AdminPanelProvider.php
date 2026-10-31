@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile(isSimple: false)
             ->brandName('Portfolio admin')
-            ->favicon(asset('favicon.ico'))
+            ->favicon(asset('admin-favicon.svg')) // "#" root prompt, so the admin tab never looks like the public site
             ->colors([
                 'primary' => Color::Cyan,
             ])
