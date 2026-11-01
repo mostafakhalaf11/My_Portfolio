@@ -13,7 +13,6 @@ class PageSectionSeeder extends Seeder
             'heading' => 'I build multi-tenant systems end to end — from the payroll engine to the app on your phone.',
             'subheading' => 'Policy-driven business engines, APIs that survive their second year, and the apps built on top of them.',
             'settings' => [
-                'show_diagram' => true,
                 'show_availability' => true,
                 'now' => 'Shipping the API behind the AMG ERP mobile and desktop apps · Stock Yard in private staging ahead of launch',
             ],

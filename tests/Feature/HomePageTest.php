@@ -31,11 +31,13 @@ it('renders the home page with every seeded section', function () {
         );
 });
 
-it('exposes the hero diagram data the SVG renders from', function () {
-    $this->get('/')
+it('keeps architecture diagrams on project pages, out of the home page', function () {
+    $this->get('/')->assertInertia(fn (Assert $page) => $page->missing('caseStudies.0.diagram'));
+
+    $this->get('/projects/amg-erp-multi-tenant-hrm-payroll')
         ->assertInertia(fn (Assert $page) => $page
-            ->has('caseStudies.0.diagram.nodes', 9)
-            ->has('caseStudies.0.diagram.edges', 8)
+            ->has('study.diagram.nodes', 9)
+            ->has('study.diagram.edges', 8)
         );
 });
 

@@ -20,10 +20,10 @@ it('edits the hero settings through typed fields', function () {
     $hero = PageSection::where('key', 'hero')->firstOrFail();
 
     Livewire::test(EditPageSection::class, ['record' => $hero->getRouteKey()])
-        ->assertSchemaStateSet(['settings.show_diagram' => true, 'settings.show_availability' => true])
+        ->assertSchemaStateSet(['settings.show_availability' => true])
         ->fillForm([
             'heading' => 'New headline',
-            'settings.show_diagram' => false,
+            'settings.show_availability' => false,
             'settings.now' => 'Shipping the next thing',
         ])
         ->call('save')
@@ -33,8 +33,7 @@ it('edits the hero settings through typed fields', function () {
     expect($hero->fresh()->heading)->toBe('New headline')
         ->and(collect($hero->fresh()->settings)->sortKeys()->all())->toBe([
             'now' => 'Shipping the next thing',
-            'show_availability' => true,
-            'show_diagram' => false,
+            'show_availability' => false,
         ]);
 });
 

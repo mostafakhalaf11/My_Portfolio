@@ -65,7 +65,6 @@ class HomeController extends Controller
                     'summary' => $s->summary,
                     'tech' => $s->tech ?? [],
                     'outcomes' => array_slice($s->outcomes ?? [], 0, 3),
-                    'diagram' => $s->architecture_diagram,
                     'repoUrl' => $s->repo_url,
                     'liveUrl' => $s->live_url,
                     'stage' => $s->stage ? ['value' => $s->stage->value, 'label' => $s->stage->getLabel()] : null,

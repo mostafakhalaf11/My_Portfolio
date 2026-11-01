@@ -1,7 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import SiteShell from '../components/SiteShell.vue';
-import ArchitectureDiagram from '../components/ArchitectureDiagram.vue';
 import ProjectLinks from '../components/ProjectLinks.vue';
 import StageBadge from '../components/StageBadge.vue';
 
@@ -17,7 +16,6 @@ const props = defineProps({
 });
 
 const section = (key) => props.sections?.[key] ?? {};
-const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
 </script>
 
 <template>
@@ -112,16 +110,6 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
                         </svg>
                         Download CV
                     </a>
-                </div>
-
-                <div
-                    v-if="heroDiagram && section('hero').settings?.show_diagram"
-                    class="mt-12 rounded-xl border border-[color:var(--color-wire)] bg-[color:var(--color-surface-raised)]/70 p-4 sm:p-6"
-                >
-                    <p class="mb-3 font-mono text-xs tracking-widest text-[color:var(--color-ink-muted)] uppercase">
-                        Request path — multi-tenant ERP
-                    </p>
-                    <ArchitectureDiagram :diagram="heroDiagram" :height="380" />
                 </div>
             </div>
         </section>

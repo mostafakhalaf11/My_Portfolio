@@ -62,9 +62,6 @@ class PageSectionForm
                         Toggle::make('settings.show_availability')
                             ->label('Show the "open to roles" badge'),
 
-                        Toggle::make('settings.show_diagram')
-                            ->label('Show the architecture diagram'),
-
                         TextInput::make('settings.now')
                             ->label('"Now" line')
                             ->maxLength(200)
