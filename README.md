@@ -98,6 +98,26 @@ bundle, so asserting on server HTML tests nothing.
 One test exists purely as a guard: `it('keeps credentials out of version-controlled source')`
 scans the tracked tree for the admin password on every run.
 
+## Link previews and SEO
+
+Link-preview bots (LinkedIn, WhatsApp, X, Slack) and search crawlers never run JavaScript, so
+every page's title, description, Open Graph and Twitter tags, canonical URL and schema.org
+JSON-LD are printed by the server. Controllers build them with `App\Support\PageMeta` and pass
+them as the `meta` prop; `app.blade.php` prints them, and Vue's `<Head>` reuses the same values
+on client-side navigation. `/sitemap.xml` and `/robots.txt` are generated from the current host.
+
+The preview images in `public/og/` are rendered from `resources/og/card.html` with the live
+content. After changing a project's title, subtitle, stage or tech:
+
+```bash
+php artisan og:render   # needs a local Chrome or Edge; then commit public/og/
+```
+
+Platforms cache previews for days. To refresh one after a change, paste the URL into the
+[LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) or the
+[Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) (WhatsApp uses the
+same cache).
+
 ## Deployment — Azure App Service, $0/month
 
 Production is an App Service **Free (F1)** Linux plan on PHP 8.4, defined in `infra/` (Bicep)
@@ -149,4 +169,5 @@ Service managed certificate, or keep F1 behind a Cloudflare Worker proxy.
 - [ ] ABAC policy simulator
 - [ ] Contact form with honeypot + Turnstile
 - [x] Deployment pipeline: GitHub Actions → Azure App Service (F1, $0/month)
-- [ ] SSR, dynamic OG images, sitemap
+- [x] Link previews (Open Graph, Twitter cards, rendered card images), JSON-LD, sitemap, robots
+- [ ] SSR

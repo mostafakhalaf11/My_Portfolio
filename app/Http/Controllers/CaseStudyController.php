@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CaseStudy;
 use App\Models\Profile;
+use App\Support\PageMeta;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,8 +14,29 @@ class CaseStudyController extends Controller
     {
         abort_unless($caseStudy->isPublished(), 404);
 
+        $profile = Profile::current();
+
         return Inertia::render('CaseStudies/Show', [
-            'profile' => ['name' => Profile::current()->name],
+            'meta' => PageMeta::make(
+                title: "{$caseStudy->title} | {$profile->name}",
+                description: $caseStudy->summary,
+                siteName: $profile->name,
+                // A rendered card for this project if one exists, otherwise the site card.
+                image: PageMeta::image("og/projects/{$caseStudy->slug}.png"),
+                imageAlt: $caseStudy->title,
+                type: 'article',
+                jsonLd: array_filter([
+                    '@context' => 'https://schema.org',
+                    '@type' => 'CreativeWork',
+                    'name' => $caseStudy->title,
+                    'description' => $caseStudy->summary,
+                    'url' => url()->current(),
+                    'author' => ['@type' => 'Person', 'name' => $profile->name, 'url' => url('/')],
+                    'dateCreated' => $caseStudy->year_from ? (string) $caseStudy->year_from : null,
+                    'keywords' => implode(', ', $caseStudy->tech ?? []) ?: null,
+                ]),
+            ),
+            'profile' => ['name' => $profile->name],
             'study' => [
                 'slug' => $caseStudy->slug,
                 'title' => $caseStudy->title,

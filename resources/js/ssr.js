@@ -4,13 +4,12 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import createServer from '@inertiajs/vue3/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-const appName = process.env.VITE_APP_NAME || 'Mostafa Khalaf';
-
 createServer((page) =>
     createInertiaApp({
         page,
         render: renderToString,
-        title: (title) => (title ? `${title} — ${appName}` : appName),
+        // Titles arrive fully composed in the `meta` prop; see resources/js/app.js.
+        title: (title) => title,
         resolve: (name) =>
             resolvePageComponent(
                 `./pages/${name}.vue`,

@@ -1,0 +1,114 @@
+<!doctype html>
+<!--
+    Link-preview card template, rendered to a 1200×630 PNG (public/og/*.png).
+    Text comes from the query string, so one template draws every card:
+      title  big line          sub    line under it       tags  comma-separated chips
+      badge  pill text         tone   available | live | staging
+      kicker text after the ~/name prompt (optional)
+    Render with headless Edge or Chrome — see "Link previews" in README.md.
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:400,600,700|jetbrains-mono:400,500&display=block">
+    <style>
+        :root {
+            --surface: #0a0f1a;
+            --raised: #111827;
+            --ink: #e6edf7;
+            --muted: #94a3b8;
+            --wire: #1e293b;
+            --signal: #38bdf8;
+            --signal-soft: #0c4a6e;
+            --caution: #fbbf24;
+            --caution-soft: #451a03;
+        }
+        * { box-sizing: border-box; margin: 0; }
+        html, body { width: 1200px; height: 630px; overflow: hidden; }
+        body { background: var(--surface); color: var(--ink); font-family: Inter, sans-serif; position: relative; }
+
+        /* The site's blueprint grid, fading out toward the edges. */
+        .grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(var(--wire) 1px, transparent 1px),
+                linear-gradient(90deg, var(--wire) 1px, transparent 1px);
+            background-size: 48px 48px;
+            opacity: .6;
+            -webkit-mask-image: radial-gradient(ellipse 80% 90% at 30% 35%, #000 35%, transparent 85%);
+        }
+        .accent { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: linear-gradient(90deg, var(--signal), #0e7490 60%, transparent); }
+
+        .card { position: relative; height: 100%; padding: 60px 72px 64px; display: flex; flex-direction: column; }
+
+        .top { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+        .who { display: flex; align-items: center; gap: 18px; font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 500; }
+        .who .tilde { color: var(--signal); }
+        .who .kicker { color: var(--muted); font-weight: 400; }
+
+        .badge { display: inline-flex; align-items: center; gap: 12px; border-radius: 999px; padding: 10px 22px; font-family: 'JetBrains Mono', monospace; font-size: 21px; font-weight: 500; white-space: nowrap; }
+        .badge::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
+        .tone-available { border: 1px solid var(--wire); background: var(--raised); color: var(--ink); }
+        .tone-available::before { background: var(--signal); }
+        .tone-live { background: var(--signal-soft); color: var(--signal); }
+        .tone-staging { background: var(--caution-soft); color: var(--caution); }
+
+        .body { margin-top: auto; margin-bottom: auto; padding-top: 24px; }
+        h1 { font-size: 62px; line-height: 1.08; font-weight: 700; letter-spacing: -0.02em; max-width: 1050px; }
+        .sub { margin-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--signal); }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 12px; }
+        .tag { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--muted); border: 1px solid var(--wire); background: rgba(17, 24, 39, .85); border-radius: 8px; padding: 7px 15px; }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div class="accent"></div>
+
+    <main class="card">
+        <div class="top">
+            <div class="who">
+                <!-- Same mark as public/favicon.svg -->
+                <svg width="56" height="56" viewBox="0 0 32 32" aria-hidden="true">
+                    <rect width="32" height="32" rx="7" fill="#0a0f1a"/>
+                    <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#1e293b"/>
+                    <g fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 16.5q2.75-4.5 5.5 0t5.5 0"/>
+                        <path d="M19.5 24.5 26.5 7.5"/>
+                    </g>
+                </svg>
+                <span><span class="tilde">~/</span>Mostafa Khalaf Mohamed<span class="kicker" id="kicker"></span></span>
+            </div>
+            <span class="badge" id="badge"></span>
+        </div>
+
+        <div class="body">
+            <h1 id="title"></h1>
+            <p class="sub" id="sub"></p>
+        </div>
+
+        <div class="tags" id="tags"></div>
+    </main>
+
+    <script>
+        // textContent only: query values are never parsed as HTML.
+        const q = new URLSearchParams(location.search);
+        document.getElementById('title').textContent = q.get('title') || '';
+        document.getElementById('sub').textContent = q.get('sub') || '';
+        document.getElementById('kicker').textContent = q.get('kicker') ? ' · ' + q.get('kicker') : '';
+
+        const badge = document.getElementById('badge');
+        badge.textContent = q.get('badge') || '';
+        badge.classList.add('tone-' + (q.get('tone') || 'available'));
+        badge.hidden = !q.get('badge');
+
+        const tags = document.getElementById('tags');
+        (q.get('tags') || '').split(',').map((t) => t.trim()).filter(Boolean).forEach((t) => {
+            const chip = document.createElement('span');
+            chip.className = 'tag';
+            chip.textContent = t;
+            tags.appendChild(chip);
+        });
+    </script>
+</body>
+</html>

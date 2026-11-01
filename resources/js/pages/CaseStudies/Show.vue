@@ -6,15 +6,17 @@ import ProjectLinks from '../../components/ProjectLinks.vue';
 import StageBadge from '../../components/StageBadge.vue';
 
 defineProps({
+    meta: { type: Object, required: true },
     profile: { type: Object, required: true },
     study: { type: Object, required: true },
 });
 </script>
 
 <template>
+    <!-- Same values the server printed (resources/views/app.blade.php); head-key pairs them up. -->
     <Head>
-        <title>{{ study.title }}</title>
-        <meta name="description" :content="study.summary" />
+        <title>{{ meta.title }}</title>
+        <meta head-key="description" name="description" :content="meta.description" />
     </Head>
 
     <SiteShell :name="profile.name">

@@ -4,10 +4,10 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Mostafa Khalaf';
-
 createInertiaApp({
-    title: (title) => (title ? `${title} — ${appName}` : appName),
+    // Titles arrive fully composed in the `meta` prop (see App\Support\PageMeta), the same
+    // string the server prints for crawlers, so no suffix is appended here.
+    title: (title) => title,
     resolve: (name) =>
         resolvePageComponent(
             `./pages/${name}.vue`,

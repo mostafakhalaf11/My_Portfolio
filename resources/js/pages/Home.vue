@@ -6,6 +6,7 @@ import ProjectLinks from '../components/ProjectLinks.vue';
 import StageBadge from '../components/StageBadge.vue';
 
 const props = defineProps({
+    meta: { type: Object, required: true },
     profile: { type: Object, required: true },
     sections: { type: Object, default: () => ({}) },
     caseStudies: { type: Array, default: () => [] },
@@ -20,9 +21,10 @@ const heroDiagram = props.caseStudies?.[0]?.diagram ?? null;
 </script>
 
 <template>
+    <!-- Same values the server printed (resources/views/app.blade.php); head-key pairs them up. -->
     <Head>
-        <title>{{ profile.seo?.title ?? profile.name }}</title>
-        <meta name="description" :content="profile.seo?.description ?? profile.summary" />
+        <title>{{ meta.title }}</title>
+        <meta head-key="description" name="description" :content="meta.description" />
     </Head>
 
     <SiteShell :name="profile.name">
