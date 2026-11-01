@@ -115,12 +115,17 @@ jobs:
                'storage/framework/views/*.php' 'storage/logs/*.log'
           du -h release.zip
 
+      # clean: true makes wwwroot an exact copy of the package. Without it, files deleted from the
+      # repo survive on the server (a removed public/robots.txt kept shadowing its route).
+      # Safe: the SQLite database lives in /home/data, outside wwwroot.
       - name: Deploy
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: release.zip
+          type: zip
+          clean: true
 
       # The home page reads the database, so a 200 proves boot, migrations and seed all worked.
       # F1 cold-starts and runs startup.sh first, hence the generous retry window (~5 minutes).
