@@ -45,13 +45,20 @@ final class PageMeta
         ];
     }
 
-    /** A page-specific card if one has been rendered, otherwise the site-wide card. */
+    /**
+     * A page-specific card if one has been rendered, otherwise the site-wide card.
+     *
+     * LinkedIn, WhatsApp and X cache preview images by URL for days, so the URL carries a
+     * hash of the file: a re-rendered card gets a new URL and is fetched fresh, while an
+     * unchanged one keeps its URL (and its cache) across deployments.
+     */
     public static function image(?string $specific = null): string
     {
-        if ($specific !== null && is_file(public_path($specific))) {
-            return asset($specific);
-        }
+        $path = $specific !== null && is_file(public_path($specific)) ? $specific : 'og/portfolio.png';
+        $file = public_path($path);
 
-        return asset('og/portfolio.png');
+        return is_file($file)
+            ? asset($path).'?v='.substr(hash_file('xxh3', $file), 0, 10)
+            : asset($path);
     }
 }

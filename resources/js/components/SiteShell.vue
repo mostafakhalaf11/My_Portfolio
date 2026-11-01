@@ -48,8 +48,17 @@ const links = [
             class="sticky top-0 z-40 border-b border-[color:var(--color-wire)] bg-[color:var(--color-surface)]/85 backdrop-blur"
         >
             <div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-5 sm:px-8">
-                <Link href="/" class="font-mono text-sm font-medium tracking-tight">
-                    <span class="text-[color:var(--color-signal)]">~/</span>{{ name || 'home' }}
+                <Link href="/" class="flex items-center gap-3 font-mono text-sm font-medium tracking-tight">
+                    <!-- Same mark as public/favicon.svg and the link-preview cards. -->
+                    <svg viewBox="0 0 32 32" class="size-7 shrink-0" aria-hidden="true">
+                        <rect width="32" height="32" rx="7" fill="#0a0f1a" />
+                        <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#1e293b" />
+                        <g fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 16.5q2.75-4.5 5.5 0t5.5 0" />
+                            <path d="M19.5 24.5 26.5 7.5" />
+                        </g>
+                    </svg>
+                    {{ name || 'home' }}
                 </Link>
 
                 <nav class="hidden items-center gap-6 md:flex" aria-label="Primary">

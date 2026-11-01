@@ -2,6 +2,7 @@
 
 use App\Enums\ContentStatus;
 use App\Models\CaseStudy;
+use App\Support\PageMeta;
 use Database\Seeders\DatabaseSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -30,7 +31,7 @@ it('prints link-preview tags into the server HTML of the home page', function ()
     expect($this->get('/')->assertOk()->getContent())
         ->toContain("<title inertia>{$title}</title>")
         ->toContain("<meta property=\"og:title\" content=\"{$title}\">")
-        ->toContain('<meta property="og:image" content="'.asset('og/portfolio.png').'">')
+        ->toContain('<meta property="og:image" content="'.asset('og/portfolio.png').'?v=')
         ->toContain('<meta property="og:image:width" content="1200">')
         ->toContain('<meta name="twitter:card" content="summary_large_image">')
         ->toContain('<link rel="canonical" href="'.url('/').'">')
@@ -40,7 +41,7 @@ it('prints link-preview tags into the server HTML of the home page', function ()
 it('hands Vue the same meta the server printed', function () {
     $this->get('/')->assertInertia(fn (Assert $page) => $page
         ->where('meta.title', 'Mostafa Khalaf Mohamed — Full-Stack Software Engineer')
-        ->where('meta.image', asset('og/portfolio.png'))
+        ->where('meta.image', PageMeta::image())
     );
 });
 
@@ -59,7 +60,7 @@ it('gives each project its own title, description and card', function () {
     expect($this->get('/projects/stock-yard-commerce-rfq')->assertOk()->getContent())
         ->toContain('<meta property="og:type" content="article">')
         ->toContain('<title inertia>Stock Yard — Bilingual B2B Commerce and RFQ Platform | Mostafa Khalaf Mohamed</title>')
-        ->toContain('<meta property="og:image" content="'.asset('og/projects/stock-yard-commerce-rfq.png').'">');
+        ->toContain('<meta property="og:image" content="'.asset('og/projects/stock-yard-commerce-rfq.png').'?v=');
 });
 
 it('falls back to the site card for a project without its own image', function () {
@@ -71,7 +72,7 @@ it('falls back to the site card for a project without its own image', function (
     ]);
 
     expect($this->get('/projects/no-card-yet')->getContent())
-        ->toContain('<meta property="og:image" content="'.asset('og/portfolio.png').'">');
+        ->toContain('<meta property="og:image" content="'.asset('og/portfolio.png').'?v=');
 });
 
 it('cannot break out of the JSON-LD script with content from the CMS', function () {
@@ -104,6 +105,14 @@ it('lists the home page and every published project in the sitemap', function ()
         route('projects.show', 'amg-erp-multi-tenant-hrm-payroll'),
         route('projects.show', 'stock-yard-commerce-rfq'),
     ]);
+});
+
+it('versions preview images by content so platforms refetch a re-rendered card', function () {
+    // Same bytes, same URL (caches survive deploys); new bytes, new URL (stale cards replaced).
+    $hash = substr(hash_file('xxh3', public_path('og/portfolio.png')), 0, 10);
+
+    expect(PageMeta::image())->toBe(asset('og/portfolio.png')."?v={$hash}")
+        ->and(PageMeta::image())->toBe(PageMeta::image());
 });
 
 it('keeps the admin out of search results and points crawlers at the sitemap', function () {

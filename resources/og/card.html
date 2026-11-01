@@ -4,7 +4,7 @@
     Text comes from the query string, so one template draws every card:
       title  big line          sub    line under it       tags  comma-separated chips
       badge  pill text         tone   available | live | staging
-      kicker text after the ~/name prompt (optional)
+      kicker text after the name (optional)
     Render with headless Edge or Chrome — see "Link previews" in README.md.
 -->
 <html lang="en">
@@ -42,9 +42,10 @@
         .card { position: relative; height: 100%; padding: 60px 72px 64px; display: flex; flex-direction: column; }
 
         .top { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-        .who { display: flex; align-items: center; gap: 18px; font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 500; }
-        .who .tilde { color: var(--signal); }
+        /* nowrap: a wide badge ("Live in production") must never push the kicker onto a second line. */
+        .who { display: flex; align-items: center; gap: 26px; font-family: 'JetBrains Mono', monospace; font-size: 25px; font-weight: 500; white-space: nowrap; min-width: 0; }
         .who .kicker { color: var(--muted); font-weight: 400; }
+        .badge { flex-shrink: 0; }
 
         .badge { display: inline-flex; align-items: center; gap: 12px; border-radius: 999px; padding: 10px 22px; font-family: 'JetBrains Mono', monospace; font-size: 21px; font-weight: 500; white-space: nowrap; }
         .badge::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
@@ -77,7 +78,8 @@
                         <path d="M19.5 24.5 26.5 7.5"/>
                     </g>
                 </svg>
-                <span><span class="tilde">~/</span>Mostafa Khalaf Mohamed<span class="kicker" id="kicker"></span></span>
+                <!-- The mark already reads "~/", so the name stands alone. -->
+                <span>Mostafa Khalaf Mohamed<span class="kicker" id="kicker"></span></span>
             </div>
             <span class="badge" id="badge"></span>
         </div>
