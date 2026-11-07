@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "dev:serve": "php artisan views:warm && concurrently -k -n vite,php -c \"#38bdf8,#a78bfa\" \"vite\" \"php artisan serve --host=127.0.0.1 --port=8000\""
+        "dev:serve": "php artisan views:warm && concurrently -k -n vite,php -c \"#38bdf8,#a78bfa\" \"vite\" \"php artisan serve\""
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
