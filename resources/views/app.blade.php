@@ -8,32 +8,32 @@
     {{--
         SEO and link previews. Printed by the server because crawlers and preview bots
         (LinkedIn, WhatsApp, X, Slack) never run JavaScript. Data: App\Support\PageMeta.
-        The `inertia` attributes hand the title and description to Vue's <Head> on
-        client-side navigation instead of duplicating them.
+        Matching `inertia` keys let Vue's <Head> replace page-specific tags during
+        client-side navigation without duplicating them.
     --}}
     @php($meta = $page['props']['meta'] ?? null)
     @if ($meta)
         <title inertia>{{ $meta['title'] }}</title>
         <meta name="description" content="{{ $meta['description'] }}" inertia="description">
-        <link rel="canonical" href="{{ $meta['url'] }}">
+        <link rel="canonical" href="{{ $meta['url'] }}" inertia="canonical">
 
-        <meta property="og:type" content="{{ $meta['type'] }}">
+        <meta property="og:type" content="{{ $meta['type'] }}" inertia="og:type">
         <meta property="og:site_name" content="{{ $meta['siteName'] }}">
         <meta property="og:locale" content="en_US">
-        <meta property="og:url" content="{{ $meta['url'] }}">
-        <meta property="og:title" content="{{ $meta['title'] }}">
-        <meta property="og:description" content="{{ $meta['description'] }}">
-        <meta property="og:image" content="{{ $meta['image'] }}">
+        <meta property="og:url" content="{{ $meta['url'] }}" inertia="og:url">
+        <meta property="og:title" content="{{ $meta['title'] }}" inertia="og:title">
+        <meta property="og:description" content="{{ $meta['description'] }}" inertia="og:description">
+        <meta property="og:image" content="{{ $meta['image'] }}" inertia="og:image">
         <meta property="og:image:type" content="image/png">
         <meta property="og:image:width" content="{{ $meta['imageWidth'] }}">
         <meta property="og:image:height" content="{{ $meta['imageHeight'] }}">
-        <meta property="og:image:alt" content="{{ $meta['imageAlt'] }}">
+        <meta property="og:image:alt" content="{{ $meta['imageAlt'] }}" inertia="og:image:alt">
 
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="{{ $meta['title'] }}">
-        <meta name="twitter:description" content="{{ $meta['description'] }}">
-        <meta name="twitter:image" content="{{ $meta['image'] }}">
-        <meta name="twitter:image:alt" content="{{ $meta['imageAlt'] }}">
+        <meta name="twitter:title" content="{{ $meta['title'] }}" inertia="twitter:title">
+        <meta name="twitter:description" content="{{ $meta['description'] }}" inertia="twitter:description">
+        <meta name="twitter:image" content="{{ $meta['image'] }}" inertia="twitter:image">
+        <meta name="twitter:image:alt" content="{{ $meta['imageAlt'] }}" inertia="twitter:image:alt">
 
         @if ($meta['jsonLd'])
             {{-- JSON_HEX_TAG encodes < and >, so no content can close this script tag early. --}}

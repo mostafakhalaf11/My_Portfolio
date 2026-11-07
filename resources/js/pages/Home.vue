@@ -1,5 +1,6 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+import PageHead from '../components/PageHead.vue';
 import SiteShell from '../components/SiteShell.vue';
 import ProjectLinks from '../components/ProjectLinks.vue';
 import StageBadge from '../components/StageBadge.vue';
@@ -16,101 +17,134 @@ const props = defineProps({
 });
 
 const section = (key) => props.sections?.[key] ?? {};
+
+const highlights = (section('hero').settings?.proof ?? '')
+    .split('·')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const visibleSkills = (group) =>
+    section('stack').settings?.primary_only ? group.skills.filter((skill) => skill.isPrimary) : group.skills;
 </script>
 
 <template>
-    <!-- Same values the server printed (resources/views/app.blade.php); head-key pairs them up. -->
-    <Head>
-        <title>{{ meta.title }}</title>
-        <meta head-key="description" name="description" :content="meta.description" />
-    </Head>
-
     <SiteShell :name="profile.name">
+        <PageHead :meta="meta" />
+
         <!-- Hero -->
         <section class="relative overflow-hidden border-b border-[color:var(--color-wire)]">
             <div class="bg-blueprint pointer-events-none absolute inset-0 opacity-70" aria-hidden="true"></div>
 
-            <div class="relative mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
-                <p
-                    v-if="profile.isAvailable && section('hero').settings?.show_availability"
-                    class="mb-5 inline-flex items-center gap-2 rounded-full border border-[color:var(--color-wire)] bg-[color:var(--color-surface-raised)] px-3 py-1 font-mono text-xs"
-                >
-                    <span class="relative flex size-2">
-                        <span class="absolute inline-flex size-full animate-ping rounded-full bg-[color:var(--color-signal)] opacity-60"></span>
-                        <span class="relative inline-flex size-2 rounded-full bg-[color:var(--color-signal)]"></span>
-                    </span>
-                    Open to full-stack and backend roles
-                </p>
+            <div
+                class="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-10 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14"
+            >
+                <div>
+                    <div class="mb-5 flex items-center gap-3">
+                        <!-- Mobile and tablet: a small avatar beside the badge keeps the hero short. -->
+                        <img
+                            v-if="profile.avatarUrl"
+                            :src="profile.avatarUrl"
+                            :alt="profile.name"
+                            width="56"
+                            height="56"
+                            class="size-14 shrink-0 rounded-full object-cover ring-2 ring-[color:var(--color-wire)] ring-offset-2 ring-offset-[color:var(--color-surface)] lg:hidden"
+                        />
+                        <p
+                            v-if="profile.isAvailable && section('hero').settings?.show_availability"
+                            class="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-wire)] bg-[color:var(--color-surface-raised)] px-3 py-1 font-mono text-xs"
+                        >
+                            <span class="relative flex size-2">
+                                <span class="absolute inline-flex size-full animate-ping rounded-full bg-[color:var(--color-signal)] opacity-60"></span>
+                                <span class="relative inline-flex size-2 rounded-full bg-[color:var(--color-signal)]"></span>
+                            </span>
+                            Open to full-stack and backend roles
+                        </p>
+                    </div>
 
-                <h1 class="max-w-3xl text-3xl font-bold tracking-tight text-balance sm:text-5xl">
-                    {{ section('hero').heading ?? profile.headline }}
-                </h1>
+                    <h1 class="max-w-3xl text-3xl font-bold tracking-tight text-balance sm:text-5xl">
+                        {{ section('hero').heading ?? profile.headline }}
+                    </h1>
 
-                <p class="mt-4 max-w-2xl text-base text-[color:var(--color-ink-muted)] sm:text-lg">
-                    {{ section('hero').subheading }}
-                </p>
+                    <p class="mt-3 max-w-2xl text-base text-[color:var(--color-ink-muted)] sm:text-lg">
+                        {{ section('hero').subheading }}
+                    </p>
 
-                <p class="mt-6 max-w-2xl text-sm leading-relaxed text-[color:var(--color-ink-muted)]">
-                    {{ profile.summary }}
-                </p>
+                    <!-- Each "·"-separated capability stays on one line, so phrases never split. -->
+                    <ul
+                        v-if="highlights.length"
+                        class="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-xs text-[color:var(--color-signal)] sm:text-sm"
+                        role="list"
+                    >
+                        <li v-for="item in highlights" :key="item" class="inline-flex items-center gap-2 whitespace-nowrap">
+                            <span class="size-1 rounded-full bg-[color:var(--color-signal)]" aria-hidden="true"></span>{{ item }}
+                        </li>
+                    </ul>
 
-                <p
-                    v-if="section('hero').settings?.now"
-                    class="mt-5 flex max-w-2xl gap-3 font-mono text-xs leading-relaxed text-[color:var(--color-ink-muted)]"
-                >
-                    <span class="shrink-0 font-semibold text-[color:var(--color-signal)]">now →</span>
-                    <span>{{ section('hero').settings.now }}</span>
-                </p>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a
+                            href="#projects"
+                            class="rounded-md bg-[color:var(--color-signal)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-surface)] transition hover:opacity-90"
+                        >
+                            View projects
+                        </a>
+                        <a
+                            v-if="profile.resumeUrl"
+                            :href="profile.resumeUrl"
+                            download
+                            class="rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
+                        >
+                            Download CV
+                        </a>
+                    </div>
 
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <a
-                        href="#projects"
-                        class="rounded-md bg-[color:var(--color-signal)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-surface)] transition hover:opacity-90"
-                    >
-                        See my projects
-                    </a>
-                    <a
-                        v-if="profile.githubUrl"
-                        :href="profile.githubUrl"
-                        target="_blank"
-                        rel="noopener"
-                        class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
-                    >
-                        <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
-                            <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
-                        </svg>
-                        GitHub
-                    </a>
-                    <a
-                        v-if="profile.linkedinUrl"
-                        :href="profile.linkedinUrl"
-                        target="_blank"
-                        rel="noopener"
-                        class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
-                    >
-                        <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
-                            <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
-                        </svg>
-                        LinkedIn
-                    </a>
-                    <a
-                        href="#contact"
-                        class="rounded-md border border-[color:var(--color-signal)] px-4 py-2.5 text-sm font-medium text-[color:var(--color-signal)] transition hover:bg-[color:var(--color-signal-soft)]"
-                    >
-                        Get in touch
-                    </a>
-                    <a
-                        v-if="profile.resumeUrl"
-                        :href="profile.resumeUrl"
-                        download
-                        class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-wire)] px-4 py-2.5 text-sm font-medium transition hover:border-[color:var(--color-signal)]"
-                    >
-                        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                            <path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Download CV
-                    </a>
+                    <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[color:var(--color-ink-muted)]">
+                        <a
+                            v-if="profile.githubUrl"
+                            :href="profile.githubUrl"
+                            target="_blank"
+                            rel="noopener"
+                            class="hover:text-[color:var(--color-signal)]"
+                        >
+                            GitHub
+                        </a>
+                        <a
+                            v-if="profile.linkedinUrl"
+                            :href="profile.linkedinUrl"
+                            target="_blank"
+                            rel="noopener"
+                            class="hover:text-[color:var(--color-signal)]"
+                        >
+                            LinkedIn
+                        </a>
+                        <a
+                            href="#contact"
+                            class="hover:text-[color:var(--color-signal)]"
+                        >
+                            Contact
+                        </a>
+                    </div>
                 </div>
+
+                <!-- Desktop: portrait in a blueprint frame, the same corner-tick language as the grid. -->
+                <figure v-if="profile.avatarUrl" class="relative hidden lg:block">
+                    <div class="relative size-64 p-3">
+                        <span class="absolute top-0 left-0 size-5 border-t-2 border-l-2 border-[color:var(--color-signal)]" aria-hidden="true"></span>
+                        <span class="absolute top-0 right-0 size-5 border-t-2 border-r-2 border-[color:var(--color-signal)]" aria-hidden="true"></span>
+                        <span class="absolute bottom-0 left-0 size-5 border-b-2 border-l-2 border-[color:var(--color-signal)]" aria-hidden="true"></span>
+                        <span class="absolute right-0 bottom-0 size-5 border-r-2 border-b-2 border-[color:var(--color-signal)]" aria-hidden="true"></span>
+                        <img
+                            :src="profile.avatarUrl"
+                            :alt="profile.name"
+                            width="232"
+                            height="232"
+                            fetchpriority="high"
+                            class="size-full rounded-full object-cover shadow-xl ring-1 ring-[color:var(--color-wire)] shadow-black/20"
+                        />
+                    </div>
+                    <figcaption class="mt-4 text-center font-mono text-xs text-[color:var(--color-ink-muted)]">
+                        <span class="text-[color:var(--color-signal)]">~/</span>{{ profile.location }}
+                    </figcaption>
+                </figure>
             </div>
         </section>
 
@@ -169,11 +203,28 @@ const section = (key) => props.sections?.[key] ?? {};
                                 :href="`/projects/${study.slug}`"
                                 class="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-signal)]"
                             >
-                                Read the decisions →
+                                Explore {{ study.title.split(' — ')[0] }} case study
+                                <span aria-hidden="true">→</span>
                             </Link>
                         </div>
                     </article>
                 </div>
+            </div>
+        </section>
+
+        <section id="about" class="border-b border-[color:var(--color-wire)] py-14 sm:py-16">
+            <div class="mx-auto max-w-5xl px-5 sm:px-8">
+                <h2 class="text-xl font-bold tracking-tight sm:text-2xl">About</h2>
+                <p class="mt-3 max-w-3xl text-sm leading-relaxed text-[color:var(--color-ink-muted)] sm:text-base">
+                    {{ profile.summary }}
+                </p>
+                <p
+                    v-if="section('hero').settings?.now"
+                    class="mt-4 flex max-w-3xl gap-3 font-mono text-xs leading-relaxed text-[color:var(--color-ink-muted)] sm:text-sm"
+                >
+                    <span class="shrink-0 font-semibold text-[color:var(--color-signal)]">Now</span>
+                    <span>{{ section('hero').settings.now }}</span>
+                </p>
             </div>
         </section>
 
@@ -194,7 +245,7 @@ const section = (key) => props.sections?.[key] ?? {};
 
                         <ul class="mt-3 flex flex-wrap gap-1.5" role="list">
                             <li
-                                v-for="skill in group.skills"
+                                v-for="skill in visibleSkills(group)"
                                 :key="skill.name"
                                 class="rounded px-2 py-0.5 text-[11px]"
                                 :class="

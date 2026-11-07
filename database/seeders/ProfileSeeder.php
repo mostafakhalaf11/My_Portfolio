@@ -22,6 +22,7 @@ class ProfileSeeder extends Seeder
             'linkedin_url' => 'https://www.linkedin.com/in/mostafa-khalaf-3b003621a/',
             // Relative to public/. The download button stays hidden until the PDF is there.
             'resume_path' => 'cv/Mostafa_Khalaf_Mohamed_Resume.pdf',
+            'avatar_path' => 'images/mostafa-khalaf.webp',
 
             'languages' => [
                 ['name' => 'Arabic', 'level' => 'Native'],

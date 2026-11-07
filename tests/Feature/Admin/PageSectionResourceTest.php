@@ -24,6 +24,7 @@ it('edits the hero settings through typed fields', function () {
         ->fillForm([
             'heading' => 'New headline',
             'settings.show_availability' => false,
+            'settings.proof' => 'Shipped a thing',
             'settings.now' => 'Shipping the next thing',
         ])
         ->call('save')
@@ -33,8 +34,21 @@ it('edits the hero settings through typed fields', function () {
     expect($hero->fresh()->heading)->toBe('New headline')
         ->and(collect($hero->fresh()->settings)->sortKeys()->all())->toBe([
             'now' => 'Shipping the next thing',
+            'proof' => 'Shipped a thing',
             'show_availability' => false,
         ]);
+});
+
+it('edits the stack primary-only setting through a toggle', function () {
+    $stack = PageSection::where('key', 'stack')->firstOrFail();
+
+    Livewire::test(EditPageSection::class, ['record' => $stack->getRouteKey()])
+        ->assertSchemaStateSet(['settings.primary_only' => true])
+        ->fillForm(['settings.primary_only' => false])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($stack->fresh()->settings)->toBe(['primary_only' => false]);
 });
 
 it('keeps the stored settings of blocks without a settings form', function () {

@@ -62,11 +62,26 @@ class PageSectionForm
                         Toggle::make('settings.show_availability')
                             ->label('Show the "open to roles" badge'),
 
+                        TextInput::make('settings.proof')
+                            ->label('Highlights line')
+                            ->maxLength(160)
+                            ->helperText('Short capabilities line under the headline, e.g. "Multi-tenant architecture · Business-rule engines". No employer figures. Leave empty to hide it.')
+                            ->columnSpanFull(),
+
                         TextInput::make('settings.now')
                             ->label('"Now" line')
                             ->maxLength(200)
-                            ->helperText('One line on what you are working on right now. Leave empty to hide it.')
+                            ->helperText('One line on what you are working on right now, shown in About. Leave empty to hide it.')
                             ->columnSpanFull(),
+                    ]),
+
+                Section::make('Stack settings')
+                    ->visible(fn (Get $get): bool => $get('key') === 'stack')
+                    ->columnSpanFull()
+                    ->schema([
+                        Toggle::make('settings.primary_only')
+                            ->label('Show primary skills only')
+                            ->helperText('Hides the long tail so the key skills stand out.'),
                     ]),
             ]);
     }

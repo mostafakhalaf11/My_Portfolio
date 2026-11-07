@@ -1,25 +1,39 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import SiteShell from '../../components/SiteShell.vue';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.vue';
+import PageHead from '../../components/PageHead.vue';
 import ProjectLinks from '../../components/ProjectLinks.vue';
 import StageBadge from '../../components/StageBadge.vue';
 
-defineProps({
+const props = defineProps({
     meta: { type: Object, required: true },
     profile: { type: Object, required: true },
     study: { type: Object, required: true },
 });
+
+const implementationSections = computed(() =>
+    (props.study.implementation ?? '')
+        // Blank lines may hold stray spaces or CRLF when edited in the admin textarea.
+        .split(/\r?\n[ \t]*\r?\n/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean)
+        .map((paragraph) => {
+            const [firstLine, ...bodyLines] = paragraph.split(/\r?\n/);
+            const hasHeading = firstLine.trim().endsWith(':') && bodyLines.length > 0;
+
+            return {
+                heading: hasHeading ? firstLine.trim().slice(0, -1) : null,
+                body: hasHeading ? bodyLines.join('\n') : paragraph,
+            };
+        }),
+);
 </script>
 
 <template>
-    <!-- Same values the server printed (resources/views/app.blade.php); head-key pairs them up. -->
-    <Head>
-        <title>{{ meta.title }}</title>
-        <meta head-key="description" name="description" :content="meta.description" />
-    </Head>
-
     <SiteShell :name="profile.name">
+        <PageHead :meta="meta" />
         <article class="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
             <Link href="/#projects" class="font-mono text-xs text-[color:var(--color-ink-muted)] hover:text-[color:var(--color-signal)]">
                 ← all projects
@@ -30,12 +44,35 @@ defineProps({
                 <span v-if="study.years" class="font-mono text-xs text-[color:var(--color-ink-muted)]">{{ study.years }}</span>
             </div>
 
-            <p class="mt-3 font-mono text-xs text-[color:var(--color-ink-muted)]">
-                {{ study.clientLabel }}<span v-if="study.role"> · {{ study.role }}</span>
-            </p>
-
             <h1 class="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">{{ study.title }}</h1>
             <p v-if="study.subtitle" class="mt-3 text-lg text-[color:var(--color-ink-muted)]">{{ study.subtitle }}</p>
+            <p v-if="study.summary" class="mt-5 max-w-2xl leading-relaxed text-[color:var(--color-ink-muted)]">
+                {{ study.summary }}
+            </p>
+
+            <section v-if="study.context || study.role || study.clientLabel || study.outcomes.length" class="mt-8 grid gap-4 sm:grid-cols-2">
+                <div v-if="study.context" class="rounded-lg border border-[color:var(--color-wire)] p-4 sm:col-span-2">
+                    <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">Challenge</h2>
+                    <p class="mt-2 text-sm leading-relaxed text-[color:var(--color-ink-muted)]">{{ study.context }}</p>
+                </div>
+                <div v-if="study.role || study.clientLabel" class="rounded-lg border border-[color:var(--color-wire)] p-4">
+                    <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">
+                        {{ study.role ? 'My role' : 'Client' }}
+                    </h2>
+                    <p v-if="study.role" class="mt-2 text-sm leading-relaxed">{{ study.role }}</p>
+                    <p v-if="study.clientLabel" class="text-xs text-[color:var(--color-ink-muted)]" :class="study.role ? 'mt-1' : 'mt-2'">
+                        {{ study.clientLabel }}
+                    </p>
+                </div>
+                <div v-if="study.outcomes.length" class="rounded-lg border border-[color:var(--color-wire)] p-4">
+                    <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">Key result</h2>
+                    <p class="mt-2 font-mono text-2xl font-semibold text-[color:var(--color-signal)]">{{ study.outcomes[0].value }}</p>
+                    <p class="mt-1 text-sm font-medium">{{ study.outcomes[0].metric }}</p>
+                    <p v-if="study.outcomes[0].note" class="mt-1 text-xs leading-relaxed text-[color:var(--color-ink-muted)]">
+                        {{ study.outcomes[0].note }}
+                    </p>
+                </div>
+            </section>
 
             <ProjectLinks :live-url="study.liveUrl" :repo-url="study.repoUrl" class="mt-6" />
 
@@ -55,11 +92,6 @@ defineProps({
             >
                 <ArchitectureDiagram :diagram="study.diagram" :height="380" />
             </div>
-
-            <section v-if="study.context" class="mt-12">
-                <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">Context</h2>
-                <p class="mt-3 leading-relaxed text-[color:var(--color-ink-muted)]">{{ study.context }}</p>
-            </section>
 
             <section v-if="study.constraints" class="mt-10">
                 <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">Constraints</h2>
@@ -85,9 +117,14 @@ defineProps({
                 <p class="mt-3 leading-relaxed text-[color:var(--color-ink-muted)]">{{ study.decision }}</p>
             </section>
 
-            <section v-if="study.implementation" class="mt-10">
+            <section v-if="implementationSections.length" class="mt-10">
                 <h2 class="font-mono text-xs tracking-widest text-[color:var(--color-signal)] uppercase">Implementation</h2>
-                <p class="mt-3 leading-relaxed text-[color:var(--color-ink-muted)]">{{ study.implementation }}</p>
+                <div class="mt-4 space-y-5">
+                    <article v-for="(section, index) in implementationSections" :key="index">
+                        <h3 v-if="section.heading" class="font-semibold">{{ section.heading }}</h3>
+                        <p class="mt-1 leading-relaxed whitespace-pre-line text-[color:var(--color-ink-muted)]">{{ section.body }}</p>
+                    </article>
+                </div>
             </section>
 
             <section v-if="study.outcomes.length" class="mt-10">

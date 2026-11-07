@@ -29,6 +29,7 @@ const toggleTheme = () => {
 
 const links = [
     { href: '/#projects', label: 'Projects' },
+    { href: '/#about', label: 'About' },
     { href: '/#stack', label: 'Stack' },
     { href: '/#experience', label: 'Experience' },
     { href: '/#contact', label: 'Contact' },

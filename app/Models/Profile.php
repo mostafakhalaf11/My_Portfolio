@@ -33,4 +33,14 @@ class Profile extends Model
 
         return asset($this->resume_path);
     }
+
+    /** `avatar_path` is relative to public/; null until the image exists, so no broken photo. */
+    public function avatarUrl(): ?string
+    {
+        if (blank($this->avatar_path) || ! is_file(public_path($this->avatar_path))) {
+            return null;
+        }
+
+        return asset($this->avatar_path);
+    }
 }

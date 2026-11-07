@@ -16,6 +16,7 @@
     --color-ink: #0f172a;
     --color-ink-muted: #475569;
     --color-wire: #d8dee9;
+    --color-diagram-wire: #64748b;
     --color-signal: #0e7490;
     --color-signal-soft: #cffafe;
 
@@ -40,6 +41,11 @@
     body {
         background-color: var(--color-surface);
         color: var(--color-ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-signal);
+        outline-offset: 3px;
     }
 
     /* Blueprint grid: two gradients, zero image requests. */

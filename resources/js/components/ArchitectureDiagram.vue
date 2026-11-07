@@ -1,5 +1,8 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, useId } from 'vue';
+
+// Unique per instance, so two diagrams on one page never share title, description or marker ids.
+const id = useId();
 
 const props = defineProps({
     diagram: { type: Object, default: () => ({ nodes: [], edges: [] }) },
@@ -25,7 +28,9 @@ const NODE_H = 46;
 const layout = computed(() => {
     const nodes = props.diagram?.nodes ?? [];
     const count = nodes.length;
-    if (!count) return { nodes: [], edges: [], height: props.height };
+    if (!count) {
+        return { nodes: [], edges: [], relationships: [], unconnectedNodes: [], description: '', height: props.height };
+    }
 
     const perColumn = 3;
     const columns = Math.ceil(count / perColumn);
@@ -62,6 +67,8 @@ const layout = computed(() => {
 
             return {
                 ...edge,
+                fromLabel: from.label,
+                toLabel: to.label,
                 path: `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`,
                 labelX: mid,
                 labelY: (y1 + y2) / 2 - 6,
@@ -69,22 +76,58 @@ const layout = computed(() => {
         })
         .filter(Boolean);
 
-    return { nodes: positioned, edges, height: props.height };
+    const relationships = edges.map(({ fromLabel, toLabel, label }) => ({ fromLabel, toLabel, label }));
+    const connectedNodeIds = new Set(edges.flatMap((edge) => [edge.from, edge.to]));
+    const unconnectedNodes = positioned.filter((node) => !connectedNodeIds.has(node.id));
+    const description = [
+        relationships.length
+            ? `Relationships: ${relationships
+                  .map(({ fromLabel, toLabel, label }) => `${fromLabel} to ${toLabel}${label ? ` (${label})` : ''}`)
+                  .join('; ')}.`
+            : '',
+        unconnectedNodes.length ? `Components: ${unconnectedNodes.map((node) => node.label).join(', ')}.` : '',
+    ]
+        .filter(Boolean)
+        .join(' ');
+
+    return { nodes: positioned, edges, relationships, unconnectedNodes, description, height: props.height };
 });
 </script>
 
 <template>
-    <div v-if="layout.nodes.length" class="w-full overflow-x-auto">
+    <figure v-if="layout.nodes.length" class="w-full">
+        <ol v-if="layout.relationships.length || layout.unconnectedNodes.length" class="space-y-3 md:hidden" aria-label="Architecture relationships">
+            <li
+                v-for="(relationship, index) in layout.relationships"
+                :key="`mobile-edge-${index}`"
+                class="rounded-lg border border-[color:var(--color-wire)] p-3"
+            >
+                <p class="text-sm font-medium">
+                    {{ relationship.fromLabel }} <span aria-hidden="true">→</span> {{ relationship.toLabel }}
+                </p>
+                <p v-if="relationship.label" class="mt-1 text-xs text-[color:var(--color-ink-muted)]">{{ relationship.label }}</p>
+            </li>
+            <li
+                v-for="node in layout.unconnectedNodes"
+                :key="`mobile-node-${node.id}`"
+                class="rounded-lg border border-[color:var(--color-wire)] p-3 text-sm font-medium"
+            >
+                {{ node.label }}
+            </li>
+        </ol>
+
         <svg
             :viewBox="`-8 0 ${WIDTH + 16} ${layout.height}`"
-            :style="{ minWidth: '640px' }"
-            class="h-auto w-full"
+            class="hidden h-auto w-full md:block"
             role="img"
-            aria-label="System architecture diagram"
+            :aria-labelledby="`${id}-title`"
+            :aria-describedby="`${id}-description`"
         >
+            <title :id="`${id}-title`">System architecture diagram</title>
+            <desc :id="`${id}-description`">{{ layout.description }}</desc>
             <defs>
-                <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-                    <path d="M0,1 L7,4 L0,7" fill="none" stroke="var(--color-wire)" stroke-width="1.4" />
+                <marker :id="`${id}-arrow`" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,1 L7,4 L0,7" fill="none" stroke="var(--color-diagram-wire)" stroke-width="1.4" />
                 </marker>
             </defs>
 
@@ -94,9 +137,9 @@ const layout = computed(() => {
                     :key="`e${i}`"
                     :d="edge.path"
                     fill="none"
-                    stroke="var(--color-wire)"
+                    stroke="var(--color-diagram-wire)"
                     stroke-width="1.6"
-                    marker-end="url(#arrow)"
+                    :marker-end="`url(#${id}-arrow)`"
                 />
                 <text
                     v-for="(edge, i) in layout.edges"
@@ -133,5 +176,5 @@ const layout = computed(() => {
                 </text>
             </g>
         </svg>
-    </div>
+    </figure>
 </template>

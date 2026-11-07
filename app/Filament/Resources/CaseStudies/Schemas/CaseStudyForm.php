@@ -104,7 +104,7 @@ class CaseStudyForm
                                     ->label('Measured outcomes')
                                     ->schema([
                                         TextInput::make('metric')->required()->placeholder('Legacy tables migrated'),
-                                        TextInput::make('value')->required()->placeholder('~40, zero data loss'),
+                                        TextInput::make('value')->required()->placeholder('Zero'),
                                         TextInput::make('note'),
                                     ])
                                     ->itemLabel(fn (array $state): ?string => $state['metric'] ?? null)

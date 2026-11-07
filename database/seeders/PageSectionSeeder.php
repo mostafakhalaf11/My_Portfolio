@@ -7,28 +7,32 @@ use Illuminate\Database\Seeder;
 
 class PageSectionSeeder extends Seeder
 {
-    private const SECTIONS = [
+    /** Public so content migrations can apply the same copy to databases seeded earlier. */
+    public const SECTIONS = [
         [
             'key' => 'hero',
-            'heading' => 'I build multi-tenant systems end to end — from the payroll engine to the app on your phone.',
-            'subheading' => 'Policy-driven business engines, APIs that survive their second year, and the apps built on top of them.',
+            // Outcome-led, framework-free: the stack lives in the Stack section and project chips.
+            'heading' => 'I build the software businesses run on.',
+            'subheading' => 'Full-stack software engineer turning complex business rules — payroll, permissions, pricing — into reliable, multi-tenant products.',
             'settings' => [
                 'show_availability' => true,
-                'now' => 'Shipping the API behind the AMG ERP mobile and desktop apps · Stock Yard in private staging ahead of launch',
+                // Capabilities, not figures from a specific project or employer.
+                'proof' => 'Multi-tenant architecture · Business-rule engines · Zero-data-loss migrations · Bilingual products',
+                'now' => 'Building the API for AMG ERP mobile and desktop apps; preparing Stock Yard for launch.',
             ],
         ],
         [
             // Key stays `case_studies` (it is internal); the public name is "Featured projects".
             'key' => 'case_studies',
             'heading' => 'Featured projects',
-            'subheading' => 'Production systems I designed and shipped — the context, the options rejected, and what each decision measured out to.',
+            'subheading' => 'Selected results, key trade-offs, and how the systems work.',
             'settings' => ['limit' => 4],
         ],
         [
             'key' => 'stack',
             'heading' => 'Technical stack',
             'subheading' => 'What I reach for, grouped by where it sits in the system.',
-            'settings' => ['primary_only' => false],
+            'settings' => ['primary_only' => true],
         ],
         [
             'key' => 'experience',

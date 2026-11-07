@@ -31,6 +31,18 @@ it('renders the home page with every seeded section', function () {
         );
 });
 
+it('keeps the homepage introduction and current role highlights focused', function () {
+    $this->get('/')
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('sections.hero.heading', 'I build the software businesses run on.')
+            ->where('sections.hero.subheading', 'Full-stack software engineer turning complex business rules — payroll, permissions, pricing — into reliable, multi-tenant products.')
+            ->where('profile.avatarUrl', asset('images/mostafa-khalaf.webp'))
+            ->has('experiences.0.highlights', 4)
+            ->where('caseStudies.1.clientLabel', 'Freelance')
+            ->where('caseStudies.1.role', 'Sole architect and developer')
+        );
+});
+
 it('keeps architecture diagrams on project pages, out of the home page', function () {
     $this->get('/')->assertInertia(fn (Assert $page) => $page->missing('caseStudies.0.diagram'));
 
@@ -54,8 +66,9 @@ it('renders a project page with its full narrative', function () {
             ->where('study.title', 'AMG ERP — Multi-Tenant HRM and Payroll Platform')
             ->where('study.years', '2025–present')
             ->has('study.optionsRejected', 3)
-            ->has('study.outcomes', 6)
+            ->has('study.outcomes', 5)
             ->where('study.optionsRejected.0.option', 'Database per tenant')
+            ->where('study.summary', 'Modernized a single-tenant ERP into a modular, company-scoped platform for attendance, leave, payroll, and employee apps.')
             ->whereNot('study.context', '')
             ->whereNot('study.decision', '')
         );

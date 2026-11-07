@@ -44,10 +44,10 @@ it('seeds experience in reverse chronological order with the current role open-e
     $roles = Experience::published()->ordered()->get();
 
     expect($roles)->toHaveCount(4)
-        ->and($roles->first()->company)->toBe('78sWorks')
+        ->and($roles->first()->company)->toBe('78s Works')
         ->and($roles->first()->isCurrent())->toBeTrue()
         ->and($roles->first()->period())->toBe('Jul 2025 - Present')
-        ->and($roles->first()->highlights)->toHaveCount(8)
+        ->and($roles->first()->highlights)->toHaveCount(4)
         ->and($roles->last()->company)->toBe('KB-Denim');
 });
 

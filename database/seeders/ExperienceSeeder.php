@@ -8,25 +8,24 @@ use Illuminate\Database\Seeder;
 
 class ExperienceSeeder extends Seeder
 {
-    private const ENTRIES = [
+    /** Public so content migrations can apply the same copy to databases seeded earlier. */
+    public const ENTRIES = [
         [
             'title' => 'Full-Stack Developer',
-            'company' => '78sWorks',
+            // Spelled as entered in /admin on 2026-11-03.
+            'company' => '78s Works',
             'company_url' => 'https://www.78sworks.com/en',
             'location' => 'Giza, Egypt',
             'employment_type' => 'Full-time',
             'started_on' => '2025-07-01',
             'ended_on' => null,
             'summary' => 'Enterprise HR and ERP software.',
+            // No exact internal figures (table, module, tenant or commit counts): employer data stays private.
             'highlights' => [
-                'Led delivery of the company multi-tenant HRM/Payroll ERP, authoring ~1,320 of 1,900 commits in 15 months.',
-                'Designed the tenancy backbone (User > Membership > Company > Workspace) and migrated ~40 legacy global tables to company-scoped ownership using forward-only scripts and reconciliation dry-runs, with zero data loss.',
-                'Re-architected a monolithic codebase into 9 feature modules with thin controllers, service layers and shared domain engines, removing duplicated business logic.',
-                'Engineered 3 authorization layers: RBAC permissions, ABAC query scoping with integrity checks, and a conditional-access engine on IP, country and time windows, with every decision audited.',
-                'Hardened authentication with device and IP risk scoring over HMAC-hashed fingerprints, 30-minute signed confirm/report links, account lockdown and session revocation.',
-                'Building the versioned /api/v1 behind the ERP employee mobile and desktop apps: one JSON error shape, device binding, app attestation, push notifications and idempotent clock-in/out.',
-                'Led the first client production cut-over for a 53-employee tenant, covering rehearsal runbook, pre-cut-over checklist and legacy payslip parity verification.',
-                'Authored the engineering conventions and reusable delivery skills the team codes against, driving specification-first delivery across a 600-task board.',
+                'Lead engineer on the company\'s multi-tenant HRM/Payroll ERP (~70% of commits over 15 months): designed its tenancy model and moved the legacy data to company-scoped ownership with zero data loss.',
+                'Engineered three authorization layers: RBAC permissions, ABAC query scoping with integrity checks, and a conditional-access engine on IP, country and time windows, with every decision audited.',
+                'Building the versioned API behind the ERP\'s mobile and desktop apps: one JSON error shape, device binding, app attestation, push notifications and idempotent clock-in.',
+                'Led the first client production cut-over, with a rehearsal runbook and payslip parity verified against the legacy system.',
             ],
             'tech' => ['Laravel', 'PHP 8', 'MySQL 8', 'Redis', 'Sanctum', 'Filament', 'Blade', 'Alpine.js'],
         ],

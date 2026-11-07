@@ -40,6 +40,7 @@ class HomeController extends Controller
                 'githubUrl' => $profile->github_url,
                 'linkedinUrl' => $profile->linkedin_url,
                 'resumeUrl' => $profile->resumeUrl(),
+                'avatarUrl' => $profile->avatarUrl(),
                 'languages' => $profile->languages,
                 'strengths' => $profile->strengths,
                 'isAvailable' => $profile->is_available,
@@ -137,7 +138,8 @@ class HomeController extends Controller
                 'jobTitle' => $profile->headline,
                 'description' => $description,
                 'url' => url('/'),
-                'image' => $image,
+                // A person's image is their photo; the link-preview card is only the fallback.
+                'image' => $profile->avatarUrl() ?? $image,
                 'email' => "mailto:{$profile->email}",
                 'homeLocation' => $profile->location ? ['@type' => 'Place', 'name' => $profile->location] : null,
                 'sameAs' => array_values(array_filter([$profile->github_url, $profile->linkedin_url])),

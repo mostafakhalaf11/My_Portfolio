@@ -17,7 +17,7 @@ beforeEach(function () {
  */
 function jsonLdFrom(string $html): array
 {
-    preg_match('#<script type="application/ld\+json">(.+?)</script>#s', $html, $match);
+    preg_match('#<script type="application/ld\+json"[^>]*>(.+?)</script>#s', $html, $match);
 
     return json_decode($match[1] ?? 'null', true) ?? [];
 }
@@ -30,12 +30,15 @@ it('prints link-preview tags into the server HTML of the home page', function ()
 
     expect($this->get('/')->assertOk()->getContent())
         ->toContain("<title inertia>{$title}</title>")
-        ->toContain("<meta property=\"og:title\" content=\"{$title}\">")
+        ->toContain("<meta property=\"og:title\" content=\"{$title}\" inertia=\"og:title\">")
         ->toContain('<meta property="og:image" content="'.asset('og/portfolio.png').'?v=')
         ->toContain('<meta property="og:image:width" content="1200">')
         ->toContain('<meta name="twitter:card" content="summary_large_image">')
-        ->toContain('<link rel="canonical" href="'.url('/').'">')
-        ->toContain('<meta name="description" content="Full-stack engineer');
+        ->toContain('<link rel="canonical" href="'.url('/').'" inertia="canonical">')
+        ->toContain('<meta property="og:url" content="'.url('/').'" inertia="og:url">')
+        ->toContain('<meta name="description" content="Full-stack engineer')
+        // No `inertia` attribute: Inertia's <Head> would swap it for an empty script on load.
+        ->toContain('<script type="application/ld+json">{');
 });
 
 it('hands Vue the same meta the server printed', function () {
@@ -52,14 +55,17 @@ it('describes the person with schema.org data tied to GitHub and LinkedIn', func
         ->and($person['name'])->toBe('Mostafa Khalaf Mohamed')
         ->and($person['jobTitle'])->toBe('Full-Stack Software Engineer')
         ->and($person['sameAs'])->toContain('https://github.com/mostafakhalaf11')
-        ->and($person['worksFor']['name'])->toBe('78sWorks')
+        ->and($person['worksFor']['name'])->toBe('78s Works')
+        ->and($person['image'])->toBe(asset('images/mostafa-khalaf.webp'))
         ->and($person['alumniOf']['name'])->toBe('Assiut University');
 });
 
 it('gives each project its own title, description and card', function () {
     expect($this->get('/projects/stock-yard-commerce-rfq')->assertOk()->getContent())
-        ->toContain('<meta property="og:type" content="article">')
-        ->toContain('<title inertia>Stock Yard — Bilingual B2B Commerce and RFQ Platform | Mostafa Khalaf Mohamed</title>')
+        ->toContain('<meta property="og:type" content="article" inertia="og:type">')
+        ->toContain('<link rel="canonical" href="'.url('/projects/stock-yard-commerce-rfq').'" inertia="canonical">')
+        ->toContain('<meta property="og:url" content="'.url('/projects/stock-yard-commerce-rfq').'" inertia="og:url">')
+        ->toContain('<title inertia>Stock Yard — Bilingual B2B and B2C Commerce Platform | Mostafa Khalaf Mohamed</title>')
         ->toContain('<meta property="og:image" content="'.asset('og/projects/stock-yard-commerce-rfq.png').'?v=');
 });
 
